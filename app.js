@@ -27,9 +27,9 @@ app.use(bodyParser.urlencoded({extended: false }));
 app.use(function (req,res,next) {
   console.log('in interceptor');
 function checkLogin(username, password) {
-    if (req.session == 'login') {
+    if (req.url == 'login') {
       next()
-    } else if (!== res.session) {
+    } else if(!res.url) {
       res.render('login')
     } else {
       next()
@@ -52,7 +52,7 @@ app.post('/login', function (req, res) {
   console.log('username is ' + req.body.username);
   console.log('password is ' + req.body.password);
     for (let i = 0; i < data.length; i++) {
-      if (req.body.username === [i].data.username, req.body.password === [i].data.username) {
+      if (req.body.username === data[i].username, req.body.password === data[i].username) {
           res.render('index')
       }
       else {
@@ -69,8 +69,8 @@ app.post('/login', function (req, res) {
    // if not then render login with an error message
    // res.render('login')
 
-  res.render('index')
-})
+//   res.render('index')
+// })
 
 app.listen(3000, function () {
   console.log('Ciao');
