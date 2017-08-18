@@ -1,20 +1,29 @@
-
-
 const express = require('express');
 const mustacheExpress = require('mustache-express');
 const bodyParser = require('body-parser');
 const session = require('express-session');
-const app = express ();
-const userData = [
-  {user: 'Meena', pass: 'singam'},
-  {user: 'Johnny5', pass:'circuit'},
-  {user: 'admin', pass: 'admin'}
+const app = express();
+const users = [{
+    username: 'Meena',
+    password: 'singam'
+  },
+  {
+    username: 'Johnny5',
+    password: 'circuit'
+  },
+  {
+    username: 'admin',
+    password: 'admin'
+  }
 ];
-console.log(userData);
 
-app.engine('mustache', mustacheExpress())
+app.engine('mustache', mustacheExpress());
 app.set('views', './views')
 app.set('view engine', 'mustache')
+
+app.use(bodyParser.urlencoded({
+  extended: false
+}));
 
 app.use(session({
   secret: 'keyboard cat',
@@ -22,56 +31,48 @@ app.use(session({
   saveUninitialized: true
 }))
 
-
-app.use(bodyParser.urlencoded({extended: false }));
-app.use(function (req,res,next) {
+app.use(function(req, res, next) {
   console.log('in interceptor');
-function checkLogin(username, password) {
-    if (req.url == 'login') {
-      next()
-    } else if(!res.url) {
-      res.render('login')
-    } else {
+  if (req.url === '/login') {
+    console.log('hey');
+    next()
+  }
+    else if (!req.session.username) {
+    console.log('gurl');
+    res.render('login')
+    }
+    else {
+      console.log('bongo');
       next()
     }
-  }
-})
-  // / if req.url == '/login'
-  //     //     next()
-      // else if !req.session.login
-      //     res.render('login')
-      // else
-      //     next()
-
-app.get('/', function (req, res) {
-  res.render('index')
-
 })
 
-app.post('/login', function (req, res) {
+app.get('/', function(req, res) {
+  console.log('mango');
+  res.render('index');
+})
+
+app.post('/login', function(req, res) {
   console.log('username is ' + req.body.username);
   console.log('password is ' + req.body.password);
-    for (let i = 0; i < data.length; i++) {
-      if (req.body.username === data[i].username, req.body.password === data[i].username) {
-          res.render('index')
-      }
-      else {
-        res.render('login')
-      }
+  for (let i = 0; i < users.length; i++) {
+    console.log(users[i].username);
+    console.log(users[i].password);
+    if (users[i].username === req.body.username && users[i].password === req.body.password) {
+      // console.log('hell yeah');
+      req.session.username = req.body.username
+      console.log(req.session.username)
+
     }
-    })
+    }
+    if (req.session.username === req.body.username) {
+      res.render('index')
+    }
+    else {
+      res.render('login', {error: 'Username and Password not entered'})
+    }
+})
 
-  // loop through array to find username and password
-   // if you find a match then set req.session.login =true
-   // req.session.user = req.body.username
-   // res.render('index')
-
-   // if not then render login with an error message
-   // res.render('login')
-
-//   res.render('index')
-// })
-
-app.listen(3000, function () {
+app.listen(3000, function() {
   console.log('Ciao');
 })
